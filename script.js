@@ -4,7 +4,11 @@ async function send() {
 
   const message = input.value;
 
-  chatBox.innerHTML += `<p><b>You:</b> ${message}</p>`;
+  if (!message) return;
+
+  chatBox.innerHTML += `<div class="message user">${message}</div>`;
+
+  input.value = "";
 
   const res = await fetch("/api/chat", {
     method: "POST",
@@ -13,13 +17,9 @@ async function send() {
 
   const data = await res.json();
 
-  let reply = "Sorry, no response";
+  let reply = data.output?.[0]?.content?.[0]?.text || "Sorry, no response";
 
-  try {
-    reply = data.output[0].content[0].text;
-  } catch (e) {}
+  chatBox.innerHTML += `<div class="message bot">${reply}</div>`;
 
-  chatBox.innerHTML += `<p><b>AI:</b> ${reply}</p>`;
-
-  input.value = "";
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
