@@ -6,12 +6,21 @@
 </head>
 <body>
 
-<h2>CareNavigator AI</h2>
+<div class="container">
 
-<div id="chatBox"></div>
+  <div class="header">
+    <h1>CareNavigator AI</h1>
+    <p>Your intelligent healthcare assistant</p>
+  </div>
 
-<input id="input" placeholder="Ask about symptoms, doctors..." />
-<button onclick="send()">Send</button>
+  <div id="chatBox" class="chat-box"></div>
+
+  <div class="input-area">
+    <input id="input" placeholder="Describe your symptoms or ask for doctors..." />
+    <button onclick="send()">➤</button>
+  </div>
+
+</div>
 
 <script src="script.js"></script>
 
