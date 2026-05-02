@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class="app">
 
   <div class="header">
     <h1>CareNavigator AI</h1>
@@ -15,19 +15,17 @@
 
   <div id="chatBox" class="chat-box"></div>
 
-<div class="input-area">
-  <input id="input" placeholder="Describe your symptoms or ask for doctors..." />
-  <button onclick="startVoice()">🎤</button>
-  <button onclick="send()">➤</button>
-</div>
+  <div class="input-area">
+    <input id="input" placeholder="Ask about symptoms, doctors..." />
+    <button onclick="startVoice()">🎤</button>
+    <button onclick="send()">➤</button>
+  </div>
 
-<div id="mapContainer" class="map-container"></div>    
-  
+  <div id="mapContainer" class="map-container"></div>
+
 </div>
 
 <script src="script.js"></script>
-
-
 
 </body>
 </html>
