@@ -4,7 +4,7 @@ module.exports = async function (context, req) {
 
     const AZURE_ENDPOINT = "https://HealSolution.services.ai.azure.com/api/projects/HealSolution-Demo/applications/PatientCareCompanion/protocols/openai/responses?api-version=2025-11-15-preview";
 
-    const API_KEY = process.env.AZURE_API_KEY;
+    const API_KEY = "3p1AqBXJ9IpQyBrD8bRlkskAOFbCu7AfaqLDQAniHGJBlNNYym75JQQJ99CDACYeBjFXJ3w3AAAAACOGCKC2";
 
     try {
         const response = await fetch(AZURE_ENDPOINT, {
