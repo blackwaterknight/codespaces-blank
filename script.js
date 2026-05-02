@@ -1,4 +1,4 @@
-// 🎤 Voice Recognition
+// 🎤 Voice input
 function startVoice() {
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.lang = "en-US";
@@ -12,11 +12,9 @@ function startVoice() {
   recognition.start();
 }
 
-// 🔊 Text-to-Speech
+// 🔊 Voice output
 function speak(text) {
-  const speech = new SpeechSynthesisUtterance(text);
-  speech.rate = 1;
-  speech.pitch = 1;
+  const speech = new SpeechSynthesisUtterance(text.substring(0, 150));
   window.speechSynthesis.speak(speech);
 }
 
@@ -24,16 +22,17 @@ async function send() {
   const input = document.getElementById("input");
   const chatBox = document.getElementById("chatBox");
 
-  const message = input.value;
+  const message = input.value.trim();
   if (!message) return;
 
   chatBox.innerHTML += `<div class="message user">${message}</div>`;
   input.value = "";
 
   // Typing indicator
-  const typingId = "typing-" + Date.now();
-  chatBox.innerHTML += `<div id="${typingId}" class="message bot">Typing...</div>`;
-  chatBox.scrollTop = chatBox.scrollHeight;
+  const typing = document.createElement("div");
+  typing.className = "message bot";
+  typing.innerText = "Typing...";
+  chatBox.appendChild(typing);
 
   const res = await fetch("/api/chat", {
     method: "POST",
@@ -41,47 +40,39 @@ async function send() {
   });
 
   const data = await res.json();
-  let reply = data.output?.[0]?.content?.[0]?.text || "Sorry, no response";
+  typing.remove();
 
-  // Remove typing
-  document.getElementById(typingId).remove();
+  const reply = data.output?.[0]?.content?.[0]?.text || "Sorry, no response";
 
   chatBox.innerHTML += `<div class="message bot">${reply}</div>`;
+  speak(reply);
 
-  // 🔊 Speak response (shortened)
-  speak(reply.substring(0, 200));
-
-  // 🏥 Detect hospitals and show cards + map
-  if (reply.toLowerCase().includes("hospital") || reply.toLowerCase().includes("clinic")) {
-    const hospitals = extractHospitals(reply);
+  // Show hospital cards + map if detected
+  if (reply.toLowerCase().includes("hospital")) {
+    const hospitals = reply.split(",").slice(0, 3);
 
     if (hospitals.length > 0) {
-      chatBox.innerHTML += renderHospitalCards(hospitals);
-      showMap(hospitals[0]); // show first hospital on map
+      chatBox.innerHTML += renderCards(hospitals);
+      showMap(hospitals[0]);
     }
   }
 
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Extract hospital names
-function extractHospitals(text) {
-  const lines = text.split(",");
-  return lines.slice(0, 3).map(name => name.trim());
-}
-
-// Render cards
-function renderHospitalCards(hospitals) {
+// 🏥 Cards
+function renderCards(hospitals) {
   let html = `<div class="card-container">`;
 
   hospitals.forEach(h => {
+    const clean = h.trim();
+
     html += `
       <div class="card">
-        <h3>${h}</h3>
-        <p>Recommended healthcare provider</p>
+        <h3>${clean}</h3>
         <div class="card-actions">
-          <button onclick="showMap('${h}')">📍 View Map</button>
-          <button onclick="alert('Booking simulated!')">Book</button>
+          <button onclick="showMap('${clean}')">📍 Map</button>
+          <button onclick="alert('Appointment booked!')">Book</button>
         </div>
       </div>
     `;
@@ -91,11 +82,9 @@ function renderHospitalCards(hospitals) {
   return html;
 }
 
-// 🗺️ Show embedded map
+// 🗺️ Map
 function showMap(place) {
-  const mapContainer = document.getElementById("mapContainer");
-
+  const map = document.getElementById("mapContainer");
   const url = `https://www.google.com/maps?q=${encodeURIComponent(place)}&output=embed`;
-
-  mapContainer.innerHTML = `<iframe src="${url}"></iframe>`;
+  map.innerHTML = `<iframe src="${url}"></iframe>`;
 }
